@@ -8,8 +8,7 @@ import plotly.graph_objects as go
 st.set_page_config(
     page_title="S2 Quantitative Terminal",
     page_icon="🎯",
-    layout="wide",
-    initial_sidebar_state="expanded"
+    layout="wide"
 )
 
 st.markdown("""
@@ -20,38 +19,18 @@ st.markdown("""
     [data-testid="stToolbar"] {visibility: hidden !important; display: none !important;}
     .stAppDeployButton {display: none !important; visibility: hidden !important;}
     div[class*="viewerBadge"] {display: none !important; visibility: hidden !important;}
-    button[kind="header"] {display: none !important;}
     
     .stApp { background-color: #0d1117; color: #c9d1d9; font-family: -apple-system, sans-serif; }
-    .block-container { padding: 0.8rem !important; }
-
-    /* تحسين إظهار زر فتح القائمة الجانبية للجوال بوضوح تام */
-    [data-testid="collapsedControl"] {
-        display: flex !important;
-        visibility: visible !important;
-        position: fixed !important;
-        top: 10px !important;
-        right: 10px !important;
-        z-index: 999999 !important;
-        background-color: #238636 !important;
-        color: white !important;
-        border-radius: 6px !important;
-        padding: 6px 12px !important;
-        box-shadow: 0 4px 12px rgba(0,0,0,0.6) !important;
-    }
-    
-    [data-testid="collapsedControl"] svg {
-        fill: white !important;
-    }
+    .block-container { padding: 0.6rem !important; }
 
     .disclaimer-bar {
         background-color: #161b22;
         border-right: 3px solid #d29922;
         color: #8b949e;
         font-size: 11px;
-        padding: 6px 10px;
+        padding: 5px 8px;
         border-radius: 4px;
-        margin-bottom: 10px;
+        margin-bottom: 8px;
         direction: rtl;
         text-align: center;
     }
@@ -62,35 +41,36 @@ st.markdown("""
         border-radius: 8px;
         padding: 10px;
         text-align: center;
-        margin-bottom: 10px;
+        margin-bottom: 8px;
     }
     .signal-call { border-right: 4px solid #2ea043; }
     .signal-put { border-right: 4px solid #da3633; }
 
     .targets-container {
         display: grid;
-        grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
-        gap: 8px;
-        margin-bottom: 10px;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 6px;
+        margin-bottom: 8px;
     }
     .target-card {
         background: #161b22;
         border: 1px solid #21262d;
         border-radius: 6px;
-        padding: 8px;
+        padding: 6px;
         text-align: center;
     }
-    .t-label { font-size: 11px; color: #8b949e; font-weight: bold; }
-    .t-val { font-size: 14px; color: #58a6ff; font-weight: bold; margin: 2px 0; }
-    .t-time { font-size: 10px; color: #3fb950; }
+    .t-label { font-size: 10px; color: #8b949e; font-weight: bold; }
+    .t-val { font-size: 13px; color: #58a6ff; font-weight: bold; margin: 2px 0; }
+    .t-time { font-size: 9px; color: #3fb950; }
     </style>
     """, unsafe_allow_html=True)
 
 st.markdown('<div class="disclaimer-bar">تحليل تجريبي للمحفظة التجريبية لغرض التعلم وليست توصية استثمارية او مالية</div>', unsafe_allow_html=True)
 
-with st.sidebar:
-    st.header("⚙️ إعدادات المحرك")
-    
+# واجهة اختيار الأسهم والفريمات مباشرة في الشاشة الرئيسية (بدون قائمة جانبية)
+col1, col2 = st.columns(2)
+
+with col1:
     stocks_list = {
         "MU": "MU",
         "TSLA": "TSLA",
@@ -108,7 +88,8 @@ with st.sidebar:
     }
     selected_stock = st.selectbox("اختر السهم", list(stocks_list.keys()))
     stock_symbol = stocks_list[selected_stock]
-    
+
+with col2:
     timeframe_config = {
         "3 دقائق": {"interval": "3m", "days": 5, "mins": 3},
         "5 دقائق": {"interval": "5m", "days": 7, "mins": 5},
@@ -124,7 +105,6 @@ with st.sidebar:
         "أسبوعي": {"interval": "1wk", "days": 730, "mins": 10080},
         "شهري": {"interval": "1mo", "days": 1825, "mins": 43200}
     }
-    
     selected_tf = st.selectbox("الفريم الزمني", list(timeframe_config.keys()), index=3)
     tf_info = timeframe_config[selected_tf]
 
@@ -193,10 +173,10 @@ if not df.empty:
     card_style = "signal-call" if is_bull else "signal-put"
     
     st.markdown(f"""<div class="signal-header {card_style}">
-<span style="font-size:12px; color:#8b949e;">{selected_stock} [{selected_tf}]</span> | 
-<b style="font-size:16px;">{direction}</b> | 
-<span style="font-size:13px;">EP: <b>${ep:.2f}</b></span> | 
-<span style="font-size:13px; color:#f85149;">SL: <b>${sl:.2f}</b></span>
+<span style="font-size:11px; color:#8b949e;">{selected_stock} [{selected_tf}]</span> | 
+<b style="font-size:15px;">{direction}</b> | 
+<span style="font-size:12px;">EP: <b>${ep:.2f}</b></span> | 
+<span style="font-size:12px; color:#f85149;">SL: <b>${sl:.2f}</b></span>
 </div>""", unsafe_allow_html=True)
     
     targets_html = '<div class="targets-container">'
@@ -233,10 +213,10 @@ if not df.empty:
         tp = ep + (risk * i) if is_bull else ep - (risk * i)
         fig.add_hline(y=tp, line_dash="dot", line_color="#3fb950" if is_bull else "#f85149")
 
-    fig.update_xaxes(type='category', nticks=6, showgrid=True, gridcolor='#21262d')
+    fig.update_xaxes(type='category', nticks=5, showgrid=True, gridcolor='#21262d')
     fig.update_yaxes(showgrid=True, gridcolor='#21262d')
     fig.update_layout(
-        template="plotly_dark", height=380, margin=dict(l=10, r=10, t=10, b=10),
+        template="plotly_dark", height=350, margin=dict(l=10, r=10, t=10, b=10),
         xaxis_rangeslider_visible=False, paper_bgcolor="#0d1117", plot_bgcolor="#0d1117", showlegend=False
     )
     st.plotly_chart(fig, use_container_width=True, config={'displayModeBar': False})
