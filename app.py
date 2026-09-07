@@ -5,23 +5,22 @@ import yfinance as yf
 from datetime import datetime, timedelta
 import plotly.graph_objects as go
 
-# 1. تهيئة الصفحة (مرة واحدة فقط في البداية)
 st.set_page_config(
     page_title="Tshren Quant Terminal",
     page_icon="🎯",
     layout="wide",
-    initial_sidebar_state="collapsed"
+    initial_sidebar_state="expanded"
 )
 
-# 2. تنسيقات الواجهة وإخفاء أزرار المنصة والفوتر بالكامل
 st.markdown("""
     <style>
     #MainMenu {visibility: hidden;}
     footer {visibility: hidden;}
     header {visibility: hidden;}
-    [data-testid="stToolbar"] {visibility: hidden; display: none;}
-    .stAppDeployButton {display: none; visibility: hidden;}
-    div[class*="viewerBadge"] {display: none !important;}
+    [data-testid="stToolbar"] {visibility: hidden !important; display: none !important;}
+    .stAppDeployButton {display: none !important; visibility: hidden !important;}
+    div[class*="viewerBadge"] {display: none !important; visibility: hidden !important;}
+    button[kind="header"] {display: none !important;}
     
     .stApp { background-color: #0d1117; color: #c9d1d9; font-family: -apple-system, sans-serif; }
     .block-container { padding: 0.8rem !important; }
@@ -68,10 +67,8 @@ st.markdown("""
     </style>
     """, unsafe_allow_html=True)
 
-# إخلاء المسؤولية الرمادي الهادئ في الأعلى
 st.markdown('<div class="disclaimer-bar">تحليل تجريبي للمحفظة التجريبية لغرض التعلم وليست توصية استثمارية او مالية</div>', unsafe_allow_html=True)
 
-# 3. الشريط الجانبي (الأسهم الشاملة والفريمات الزمنية الجديدة)
 with st.sidebar:
     st.header("⚙️ إعدادات المحرك")
     
@@ -112,7 +109,6 @@ with st.sidebar:
     selected_tf = st.selectbox("الفريم الزمني", list(timeframe_config.keys()), index=3)
     tf_info = timeframe_config[selected_tf]
 
-# 4. جلب البيانات
 @st.cache_data(ttl=15)
 def load_data(symbol, interval, days):
     end_d = datetime.now()
@@ -127,7 +123,6 @@ def load_data(symbol, interval, days):
 
 df = load_data(stock_symbol, tf_info['interval'], tf_info['days'])
 
-# 5. خوارزمية التعرف على نمط Tshren الأصلية تماماً دون أي تعديل
 def analyze_tshren_pattern(df):
     if len(df) < 25:
         return "WAIT", 0, 0, 0
@@ -178,7 +173,6 @@ if not df.empty:
     direction = "CALL 🟢" if is_bull else "PUT 🔴"
     card_style = "signal-call" if is_bull else "signal-put"
     
-    # 6. الهيدر
     st.markdown(f"""<div class="signal-header {card_style}">
 <span style="font-size:12px; color:#8b949e;">{selected_stock} [{selected_tf}]</span> | 
 <b style="font-size:16px;">{direction}</b> | 
@@ -186,7 +180,6 @@ if not df.empty:
 <span style="font-size:13px; color:#f85149;">SL: <b>${sl:.2f}</b></span>
 </div>""", unsafe_allow_html=True)
     
-    # 7. الأهداف
     targets_html = '<div class="targets-container">'
     risk = abs(ep - sl)
     for i in range(1, 5):
@@ -206,7 +199,6 @@ if not df.empty:
     targets_html += '</div>'
     st.markdown(targets_html, unsafe_allow_html=True)
 
-    # 8. الشارت
     df_chart = df.tail(50).copy()
     df_chart['DateStr'] = df_chart.index.strftime('%m-%d %H:%M')
 
