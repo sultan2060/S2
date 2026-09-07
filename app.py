@@ -20,15 +20,29 @@ st.markdown("""
     [data-testid="stToolbar"] {visibility: hidden !important; display: none !important;}
     .stAppDeployButton {display: none !important; visibility: hidden !important;}
     div[class*="viewerBadge"] {display: none !important; visibility: hidden !important;}
-    button[kind="header"] {display: none !important; display: none;}
-    .reportview-container .main footer {visibility: hidden !important;}
-    
-    /* إخفاء زر إدارة التطبيق والمنصة بشكل قاطع */
-    [data-testid="manage-app-button"] {display: none !important;}
-    div.celestial-app-bar {display: none !important;}
+    button[kind="header"] {display: none !important;}
     
     .stApp { background-color: #0d1117; color: #c9d1d9; font-family: -apple-system, sans-serif; }
     .block-container { padding: 0.8rem !important; }
+
+    /* تحسين إظهار زر فتح القائمة الجانبية للجوال بوضوح تام */
+    [data-testid="collapsedControl"] {
+        display: flex !important;
+        visibility: visible !important;
+        position: fixed !important;
+        top: 10px !important;
+        right: 10px !important;
+        z-index: 999999 !important;
+        background-color: #238636 !important;
+        color: white !important;
+        border-radius: 6px !important;
+        padding: 6px 12px !important;
+        box-shadow: 0 4px 12px rgba(0,0,0,0.6) !important;
+    }
+    
+    [data-testid="collapsedControl"] svg {
+        fill: white !important;
+    }
 
     .disclaimer-bar {
         background-color: #161b22;
