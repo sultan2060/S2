@@ -6,7 +6,7 @@ from datetime import datetime, timedelta
 import plotly.graph_objects as go
 
 st.set_page_config(
-    page_title="Tshren Quant Terminal",
+    page_title="S2 Quantitative Terminal",
     page_icon="🎯",
     layout="wide",
     initial_sidebar_state="expanded"
@@ -14,13 +14,18 @@ st.set_page_config(
 
 st.markdown("""
     <style>
-    #MainMenu {visibility: hidden;}
-    footer {visibility: hidden;}
-    header {visibility: hidden;}
+    #MainMenu {visibility: hidden !important; display: none !important;}
+    footer {visibility: hidden !important; display: none !important;}
+    header {visibility: hidden !important; display: none !important;}
     [data-testid="stToolbar"] {visibility: hidden !important; display: none !important;}
     .stAppDeployButton {display: none !important; visibility: hidden !important;}
     div[class*="viewerBadge"] {display: none !important; visibility: hidden !important;}
-    button[kind="header"] {display: none !important;}
+    button[kind="header"] {display: none !important; display: none;}
+    .reportview-container .main footer {visibility: hidden !important;}
+    
+    /* إخفاء زر إدارة التطبيق والمنصة بشكل قاطع */
+    [data-testid="manage-app-button"] {display: none !important;}
+    div.celestial-app-bar {display: none !important;}
     
     .stApp { background-color: #0d1117; color: #c9d1d9; font-family: -apple-system, sans-serif; }
     .block-container { padding: 0.8rem !important; }
@@ -123,7 +128,7 @@ def load_data(symbol, interval, days):
 
 df = load_data(stock_symbol, tf_info['interval'], tf_info['days'])
 
-def analyze_tshren_pattern(df):
+def analyze_pattern(df):
     if len(df) < 25:
         return "WAIT", 0, 0, 0
     
@@ -167,7 +172,7 @@ def analyze_tshren_pattern(df):
         return ("CALL (جاهز)" if is_bull else "PUT (جاهز)"), ep, sl, atr
 
 if not df.empty:
-    signal, ep, sl, atr = analyze_tshren_pattern(df)
+    signal, ep, sl, atr = analyze_pattern(df)
     
     is_bull = "CALL" in signal
     direction = "CALL 🟢" if is_bull else "PUT 🔴"
@@ -223,4 +228,3 @@ if not df.empty:
     st.plotly_chart(fig, use_container_width=True, config={'displayModeBar': False})
 else:
     st.warning("جاري جلب البيانات أو أن الفريم المختار لا يحتوي على بيانات كافية حالياً.")
-
